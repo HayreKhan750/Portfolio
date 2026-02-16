@@ -85,7 +85,7 @@ const ProfileTab = () => {
 
       <div className="space-y-4">
         <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Headline (displayed as sub-title on Hero section)</label>
+          <label className="text-sm text-muted-foreground mb-1 block">Headline (displayed above your name on Hero section)</label>
           <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. AI / ML Engineer" className="bg-zinc-900 border-white/10" />
         </div>
         <div>
