@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      certificates: {
+        Row: {
+          created_at: string
+          date: string | null
+          id: string
+          issuer: string
+          name: string
+          proof_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          issuer: string
+          name: string
+          proof_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          issuer?: string
+          name?: string
+          proof_url?: string | null
+        }
+        Relationships: []
+      }
+      contact_methods: {
+        Row: {
+          icon: string | null
+          id: string
+          platform: string
+          sort_order: number | null
+          url: string
+        }
+        Insert: {
+          icon?: string | null
+          id?: string
+          platform: string
+          sort_order?: number | null
+          url: string
+        }
+        Update: {
+          icon?: string | null
+          id?: string
+          platform?: string
+          sort_order?: number | null
+          url?: string
+        }
+        Relationships: []
+      }
+      experience: {
+        Row: {
+          created_at: string
+          date_range: string
+          description: string | null
+          id: string
+          organization: string
+          sort_order: number | null
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          date_range: string
+          description?: string | null
+          id?: string
+          organization: string
+          sort_order?: number | null
+          title: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          date_range?: string
+          description?: string | null
+          id?: string
+          organization?: string
+          sort_order?: number | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -40,18 +124,21 @@ export type Database = {
       }
       profile: {
         Row: {
+          avatar_url: string | null
           bio: string
           headline: string
           id: string
           resume_url: string | null
         }
         Insert: {
+          avatar_url?: string | null
           bio?: string
           headline?: string
           id?: string
           resume_url?: string | null
         }
         Update: {
+          avatar_url?: string | null
           bio?: string
           headline?: string
           id?: string
@@ -59,37 +146,69 @@ export type Database = {
         }
         Relationships: []
       }
+      project_media: {
+        Row: {
+          caption: string | null
+          id: string
+          project_id: string
+          sort_order: number | null
+          type: string
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          id?: string
+          project_id: string
+          sort_order?: number | null
+          type?: string
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          id?: string
+          project_id?: string
+          sort_order?: number | null
+          type?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_media_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string
-          demo_url: string | null
           description: string
           featured: boolean
           github_url: string | null
           id: string
-          image_url: string | null
+          live_url: string | null
           tags: string[]
           title: string
         }
         Insert: {
           created_at?: string
-          demo_url?: string | null
           description?: string
           featured?: boolean
           github_url?: string | null
           id?: string
-          image_url?: string | null
+          live_url?: string | null
           tags?: string[]
           title: string
         }
         Update: {
           created_at?: string
-          demo_url?: string | null
           description?: string
           featured?: boolean
           github_url?: string | null
           id?: string
-          image_url?: string | null
+          live_url?: string | null
           tags?: string[]
           title?: string
         }

@@ -1,7 +1,18 @@
 import { motion } from "framer-motion";
 import { ArrowDown, FileDown } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const HeroSection = () => {
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profile").select("*").limit(1).single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <section className="relative min-h-screen flex items-center pt-20 px-6">
       <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
@@ -14,23 +25,29 @@ const HeroSection = () => {
             AI / ML Engineer
           </p>
           <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight mb-6">
-            Architecting{" "}
-            <span className="gradient-text">Intelligence.</span>
+            {profile?.headline ? (
+              <span className="gradient-text">{profile.headline}</span>
+            ) : (
+              <>Architecting{" "}<span className="gradient-text">Intelligence.</span></>
+            )}
           </h1>
           <p className="text-muted-foreground text-lg max-w-md mb-8 leading-relaxed">
-            I am Hayredin Mohammed. A Computer Science Student & AI Engineer
-            specializing in NLP, Machine Learning, and Data Science.
+            {profile?.bio || "Loading..."}
           </p>
           <div className="flex flex-wrap gap-4">
             <a href="#work" className="btn-gradient inline-flex items-center gap-2">
               View Work <ArrowDown size={16} />
             </a>
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-foreground hover:bg-white/5 transition-colors font-medium"
-            >
-              Download CV <FileDown size={16} />
-            </a>
+            {profile?.resume_url && (
+              <a
+                href={profile.resume_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-foreground hover:bg-white/5 transition-colors font-medium"
+              >
+                Download CV <FileDown size={16} />
+              </a>
+            )}
           </div>
         </motion.div>
 
