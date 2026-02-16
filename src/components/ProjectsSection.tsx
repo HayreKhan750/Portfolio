@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { ExternalLink, Github, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -114,8 +115,8 @@ const ProjectsSection = () => {
         </div>
       </div>
 
-      {/* Modal - z-[200] to appear above navbar */}
-      {selected && (
+      {/* Modal via Portal to escape stacking context */}
+      {selected && createPortal(
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6" onClick={() => setSelected(null)}>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -161,7 +162,8 @@ const ProjectsSection = () => {
               )}
             </div>
           </motion.div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );
