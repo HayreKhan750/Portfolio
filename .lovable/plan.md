@@ -1,183 +1,150 @@
 
 
-# Portfolio Operating System v2 — Full CMS Architecture
+# Skills System + Premium UI Overhaul
 
 ## Overview
-Transform the current partially-hardcoded portfolio into a fully dynamic "Headless CMS" where all public content is fetched from the database and managed through an enhanced admin dashboard. The existing Neural Glassmorphism styling remains untouched.
+Add a full Skills Management System (database to admin to public display) and apply premium UI polish across the entire application -- custom favicon, z-index fixes, custom scrollbar, breathable spacing, hero orb with avatar, and admin dashboard stats.
 
 ---
 
-## Phase 1: Database Schema Changes
+## Phase 1: Database — `skills` Table
 
-### New Tables
+Create a new `skills` table with RLS policies:
 
-**`experience`** — Education, work, awards
-- `id` (uuid, PK, default gen_random_uuid())
-- `title` (text, not null)
-- `organization` (text, not null)
-- `date_range` (text, not null)
-- `description` (text, default '')
-- `type` (text, not null — 'education', 'work', 'award')
-- `sort_order` (int, default 0)
-- `created_at` (timestamptz, default now())
+```text
+skills
+  id          uuid PK (gen_random_uuid())
+  category    text NOT NULL
+  name        text NOT NULL
+  proficiency int  DEFAULT 0
+  sort_order  int  DEFAULT 0
+  created_at  timestamptz DEFAULT now()
+```
 
-**`certificates`** — Certs with proof uploads
-- `id` (uuid, PK)
-- `name` (text, not null)
-- `issuer` (text, not null)
-- `date` (text)
-- `proof_url` (text)
-- `created_at` (timestamptz, default now())
-
-**`contact_methods`** — Social/contact links
-- `id` (uuid, PK)
-- `platform` (text, not null) — e.g. "Email", "Phone", "GitHub", "LinkedIn"
-- `url` (text, not null)
-- `icon` (text) — Lucide icon name
-- `sort_order` (int, default 0)
-
-**`project_media`** — Multi-media per project
-- `id` (uuid, PK)
-- `project_id` (uuid, FK to projects, on delete cascade)
-- `type` (text, not null — 'image', 'video')
-- `url` (text, not null)
-- `caption` (text)
-- `sort_order` (int, default 0)
-
-### Modify Existing Tables
-
-**`profile`** — Add `avatar_url` (text, nullable)
-
-**`projects`** — Rename `demo_url` to `live_url`, drop `image_url` (replaced by `project_media`)
-
-### RLS Policies (all new tables)
-- Public: SELECT only (using expression `true`)
-- Admin: INSERT, UPDATE, DELETE (using `has_role(auth.uid(), 'admin')`)
-
-### New Storage Buckets
-- `avatars` (public read)
-- `cv-docs` (public read)
-- `project-media` (public read)
-- `cert-proofs` (public read)
-
-Each bucket: authenticated users can upload/delete, public can read.
+RLS:
+- Public SELECT (true)
+- Admin INSERT/UPDATE/DELETE via `has_role(auth.uid(), 'admin')`
 
 ---
 
-## Phase 2: Public Site — Fully Dynamic
+## Phase 2: Global UI Fixes
 
-**Rule: Zero hardcoded content. Every section fetches from the database.**
+### Favicon
+- Replace the `<link rel="icon">` in `index.html` with an inline SVG data URI featuring the "HM" monogram in cyan/violet gradient
+
+### Custom Scrollbar (in `src/index.css`)
+- Thin scrollbar with cyan accent thumb and dark track
+- WebKit + Firefox scrollbar styling
+
+### Z-Index Hierarchy
+- Navbar stays at `z-50`
+- All modals/dialogs get `z-[100]` with `bg-black/80 backdrop-blur-sm` backdrop
+- Fix the project modal in `ProjectsSection.tsx` (currently `z-50`, bump to `z-[100]`)
+
+### Breathable Spacing
+- Increase section padding from `py-24` to `py-32` across all public sections
+- Increase `mb-12` headers to `mb-16`
+
+---
+
+## Phase 3: Public Frontend Changes
+
+### Hero Section (`HeroSection.tsx`)
+- Fetch `profile.avatar_url`
+- Place the avatar image centered inside the glowing sphere with a circular mask and feathered edges
+- Show the `headline` as a sub-headline under the main name text
+- Keep existing gradient text and CTA buttons
+
+### New "Technical Arsenal" Section (`SkillsSection.tsx`)
+- Insert between Projects and Experience in `Index.tsx`
+- Fetch from `skills` table via TanStack Query
+- Group by `category` with category labels
+- Display as glassmorphic "tech pills" with neon glow on hover and scale animation
+- Show thin progress bar below each skill if `proficiency > 0`
 
 ### Navbar
-- Fetch `profile` for avatar bubble display
-- "Download CV" button uses `profile.resume_url`
+- Add "Skills" link pointing to `#skills`
 
-### Hero Section
-- Fetch `profile.headline` and `profile.bio`
-- Display `profile.avatar_url` if present
-- "Download CV" links to `profile.resume_url`
-- Remove hardcoded "Architecting Intelligence" text
-
-### Projects Section
-- Keep existing bento grid styling
-- Remove seed fallback data — show empty state or skeleton if no projects
-- Thumbnail = first media from `project_media` (sort_order = lowest)
-- Click opens modal with media carousel (all `project_media` for that project)
-- Use `live_url` instead of `demo_url`
-
-### Experience/Timeline Section
-- Fetch from `experience` table ordered by `sort_order`
-- Group by `type` (education, work, award) with appropriate icons
-- Remove all hardcoded items
-
-### Certificates Section (NEW)
-- New component replacing the Skills section
-- Grid of certificate cards from `certificates` table
-- Each card shows name, issuer, date, and "View Proof" button linking to `proof_url`
+### Experience Section
+- Change subtitle from "My journey and credentials." to "My academic journey and credentials."
+- Increase vertical padding between items
 
 ### Contact Section
-- Fetch `contact_methods` to display contact info dynamically
-- Remove hardcoded email/phone
-- Keep the existing contact form (inserts into `messages`)
+- For social platforms (GitHub, LinkedIn, X/Twitter), show icon-only buttons (no text labels)
+- For Email and Phone, keep readable text
+- Keep existing contact form unchanged
 
-### Footer
-- Keep the hidden admin lock icon as-is
+### Certificates Section
+- Increase spacing to match breathable layout
 
 ---
 
-## Phase 3: Admin Dashboard — Full CMS
+## Phase 4: Admin Dashboard Overhaul
 
-Replace the current simple two-tab admin with a comprehensive sidebar-based dashboard.
+### Dashboard Home with Stats (`Admin.tsx`)
+- Default tab becomes "dashboard" showing 4 summary stat cards:
+  - Total Projects, Total Certificates, Total Skills, Total Experience
+- Each card: glassmorphic, large number, small label, gradient icon
 
-### Layout
-- Left sidebar with navigation tabs (using existing glassmorphic styling)
-- Main content area on the right
-- Tabs: Profile, Experience, Projects, Certificates, Contacts, Messages
+### Sidebar (`AdminSidebar.tsx`)
+- Add "Skills" tab with `Code2` icon
+- Add "Dashboard" tab with `LayoutDashboard` icon at the top
 
-### Profile Tab
-- Edit headline, bio
-- Upload avatar (to `avatars` bucket)
-- Upload CV (to `cv-docs` bucket)
-- Save updates to `profile` table
+### New Skills Tab (`SkillsTab.tsx`)
+- List all skills grouped by category with colored category badges
+- Edit/Delete icon buttons per skill
+- Add/Edit modal form with:
+  - Category (text input or select from existing categories)
+  - Name (text input)
+  - Proficiency (slider 0-100)
+  - Sort Order (number input)
+- Validated with `react-hook-form` + `zod`
 
-### Experience Tab
-- List all experience entries grouped by type
-- Add/Edit/Delete with inline form
-- Fields: title, organization, date_range, description, type (dropdown), sort_order
-
-### Projects Tab
-- List all projects
-- Add/Edit/Delete form with: title, description, tags, live_url, github_url, featured
-- Multi-file upload for project media (to `project-media` bucket)
-- Set sort_order on media items
-- Media preview with delete capability
+### List View Headers (all tabs)
+- Update headers to show counts: "Projects (4)", "Skills (8)", etc.
+- Increase row padding for premium feel
+- Style Edit/Delete as icon-only buttons with subtle glow backgrounds
 
 ### Certificates Tab
-- List all certificates
-- Add/Edit/Delete form: name, issuer, date, proof upload (to `cert-proofs` bucket)
+- Add external link icon button in action row when `proof_url` exists
 
-### Contacts Tab
-- CRUD for contact methods (platform, url, icon)
-- Reorder with sort_order
+### Messages Tab — Inbox Cards
+- Redesign to card layout: top row with Name + Email + faded timestamp, body in lighter glass container, delete button on right
 
-### Messages Tab
-- Read-only inbox (existing functionality)
-- Delete capability (existing)
+### Dropdown Fix
+- All `<select>` elements get `bg-zinc-900` background for readability
 
----
-
-## Phase 4: Code Changes Summary
-
-### Files to Create
-- `src/components/CertificatesSection.tsx` — Public certificates grid
-- `src/components/admin/AdminSidebar.tsx` — Admin sidebar navigation
-- `src/components/admin/ProfileTab.tsx` — Profile management
-- `src/components/admin/ExperienceTab.tsx` — Experience CRUD
-- `src/components/admin/ProjectsTab.tsx` — Projects + media CRUD
-- `src/components/admin/CertificatesTab.tsx` — Certificates CRUD
-- `src/components/admin/ContactsTab.tsx` — Contact methods CRUD
-- `src/components/admin/MessagesTab.tsx` — Messages inbox
-
-### Files to Modify
-- `src/components/Navbar.tsx` — Fetch profile for avatar + CV link
-- `src/components/HeroSection.tsx` — Fetch profile data dynamically
-- `src/components/ProjectsSection.tsx` — Remove seed data, add media carousel, use live_url
-- `src/components/ExperienceSection.tsx` — Fetch from experience table
-- `src/components/ContactSection.tsx` — Fetch contact_methods dynamically
-- `src/pages/Index.tsx` — Replace SkillsSection with CertificatesSection
-- `src/pages/Admin.tsx` — Complete rewrite with sidebar layout and all tabs
-
-### Files to Remove
-- `src/components/SkillsSection.tsx` — Replaced by CertificatesSection
+### Profile Tab
+- Ensure headline input is clearly labeled and editable
 
 ---
 
-## Technical Notes
+## Phase 5: Files Summary
 
-- All public queries use TanStack Query with appropriate cache keys
-- Admin mutations invalidate relevant query caches
-- Image uploads follow the existing pattern (upload to storage, save public URL)
-- The `projects.image_url` column data will be migrated: if any existing projects have an `image_url`, a corresponding `project_media` row will be created before the column is dropped
-- RLS policies use the existing `has_role()` security definer function
-- Existing styling (glass-card, btn-gradient, gradient-text, etc.) is preserved throughout
+### New Files
+- `src/components/SkillsSection.tsx` — Public skills display
+- `src/components/admin/SkillsTab.tsx` — Admin skills CRUD
+- `src/components/admin/DashboardTab.tsx` — Stats overview
+
+### Modified Files
+- `index.html` — New SVG favicon
+- `src/index.css` — Custom scrollbar styles
+- `src/pages/Index.tsx` — Add SkillsSection, increase spacing
+- `src/components/Navbar.tsx` — Add Skills nav link
+- `src/components/HeroSection.tsx` — Avatar in orb, headline display
+- `src/components/ExperienceSection.tsx` — Updated subtitle, increased padding
+- `src/components/ContactSection.tsx` — Icon-only socials for certain platforms
+- `src/components/CertificatesSection.tsx` — Breathable spacing
+- `src/components/ProjectsSection.tsx` — Modal z-index fix, spacing
+- `src/pages/Admin.tsx` — Add dashboard + skills tabs
+- `src/components/admin/AdminSidebar.tsx` — Add Dashboard + Skills entries
+- `src/components/admin/ProjectsTab.tsx` — Header count, premium rows
+- `src/components/admin/ExperienceTab.tsx` — Header count, premium rows, dropdown fix
+- `src/components/admin/CertificatesTab.tsx` — Header count, link button, premium rows
+- `src/components/admin/ContactsTab.tsx` — Header count, premium rows, dropdown fix
+- `src/components/admin/MessagesTab.tsx` — Inbox card redesign
+- `src/components/admin/ProfileTab.tsx` — Headline label clarity
+
+### Database Migration
+- Create `skills` table with RLS policies
 
