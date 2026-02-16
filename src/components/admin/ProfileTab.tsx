@@ -15,9 +15,7 @@ const ProfileTab = () => {
   const [uploadingCv, setUploadingCv] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  useEffect(() => { fetchProfile(); }, []);
 
   const fetchProfile = async () => {
     const { data } = await supabase.from("profile").select("*").limit(1).single();
@@ -87,12 +85,12 @@ const ProfileTab = () => {
 
       <div className="space-y-4">
         <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Headline</label>
-          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Architecting Intelligence." className="bg-white/5 border-white/10" />
+          <label className="text-sm text-muted-foreground mb-1 block">Headline (displayed as sub-title on Hero section)</label>
+          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. AI / ML Engineer" className="bg-zinc-900 border-white/10" />
         </div>
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">Bio</label>
-          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Your bio..." rows={4} className="bg-white/5 border-white/10 resize-none" />
+          <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Your bio..." rows={4} className="bg-zinc-900 border-white/10 resize-none" />
         </div>
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">CV / Resume</label>

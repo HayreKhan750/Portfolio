@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   { label: "Work", href: "#work" },
+  { label: "Skills", href: "#skills" },
   { label: "Experience", href: "#experience" },
   { label: "Certificates", href: "#certificates" },
   { label: "Contact", href: "#contact" },
@@ -39,56 +40,27 @@ const Navbar = () => {
           )}
         </a>
 
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </a>
+            <a key={link.href} href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
           ))}
           {profile?.resume_url && (
-            <a
-              href={profile.resume_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gradient inline-flex items-center gap-2 text-sm !px-4 !py-2"
-            >
+            <a href={profile.resume_url} target="_blank" rel="noopener noreferrer" className="btn-gradient inline-flex items-center gap-2 text-sm !px-4 !py-2">
               <FileDown size={14} /> CV
             </a>
           )}
         </div>
 
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden text-foreground"
-          onClick={() => setOpen(!open)}
-        >
+        <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 flex flex-col gap-4 pb-4"
-          >
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden mt-4 flex flex-col gap-4 pb-4">
             {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-              </a>
+              <a key={link.href} href={link.href} onClick={() => setOpen(false)} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
             ))}
           </motion.div>
         )}

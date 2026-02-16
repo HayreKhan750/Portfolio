@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit2, X, Save, Upload } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Save, Upload, ExternalLink } from "lucide-react";
 
 interface Certificate {
   id: string;
@@ -20,9 +20,9 @@ const CertificatesTab = () => {
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { fetchItems(); }, []);
 
-  const fetch = async () => {
+  const fetchItems = async () => {
     const { data } = await supabase.from("certificates").select("*").order("created_at", { ascending: false });
     if (data) setItems(data);
   };
@@ -55,7 +55,7 @@ const CertificatesTab = () => {
       toast.success("Added!");
     }
     resetForm();
-    fetch();
+    fetchItems();
   };
 
   const startEdit = (item: Certificate) => {
@@ -67,20 +67,18 @@ const CertificatesTab = () => {
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("certificates").delete().eq("id", id);
     if (error) toast.error("Delete failed");
-    else { toast.success("Deleted!"); fetch(); }
+    else { toast.success("Deleted!"); fetchItems(); }
   };
 
   const resetForm = () => {
-    setShowForm(false);
-    setEditing(null);
-    setForm({ name: "", issuer: "", date: "" });
-    setProofFile(null);
+    setShowForm(false); setEditing(null);
+    setForm({ name: "", issuer: "", date: "" }); setProofFile(null);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-heading text-2xl font-bold">Certificates</h2>
+        <h2 className="font-heading text-2xl font-bold">Certificates ({items.length})</h2>
         <button onClick={() => showForm ? resetForm() : setShowForm(true)} className="btn-gradient flex items-center gap-2 text-sm !px-4 !py-2">
           {showForm ? <><X size={16} /> Cancel</> : <><Plus size={16} /> Add</>}
         </button>
@@ -88,9 +86,9 @@ const CertificatesTab = () => {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="glass-card p-6 space-y-4">
-          <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Certificate Name" className="bg-white/5 border-white/10" required />
-          <Input value={form.issuer} onChange={e => setForm({ ...form, issuer: e.target.value })} placeholder="Issuer (e.g. DeepLearning.AI)" className="bg-white/5 border-white/10" required />
-          <Input value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} placeholder="Date (e.g. 2024)" className="bg-white/5 border-white/10" />
+          <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Certificate Name" className="bg-zinc-900 border-white/10" required />
+          <Input value={form.issuer} onChange={e => setForm({ ...form, issuer: e.target.value })} placeholder="Issuer (e.g. DeepLearning.AI)" className="bg-zinc-900 border-white/10" required />
+          <Input value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} placeholder="Date (e.g. 2024)" className="bg-zinc-900 border-white/10" />
           <label className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm text-muted-foreground hover:bg-white/5 transition-colors cursor-pointer w-fit">
             <Upload size={16} /> {proofFile ? proofFile.name : "Upload Proof"}
             <input type="file" accept="image/*,.pdf" onChange={e => setProofFile(e.target.files?.[0] || null)} className="hidden" />
@@ -103,14 +101,19 @@ const CertificatesTab = () => {
 
       <div className="space-y-2">
         {items.map(item => (
-          <div key={item.id} className="glass-card p-4 flex items-center justify-between">
+          <div key={item.id} className="glass-card p-5 flex items-center justify-between">
             <div>
               <p className="font-semibold text-sm">{item.name}</p>
               <p className="text-xs text-muted-foreground">{item.issuer} {item.date && `· ${item.date}`}</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={() => startEdit(item)} className="text-muted-foreground hover:text-cyan transition-colors"><Edit2 size={14} /></button>
-              <button onClick={() => handleDelete(item.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 size={14} /></button>
+              {item.proof_url && (
+                <a href={item.proof_url} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-cyan transition-all">
+                  <ExternalLink size={14} />
+                </a>
+              )}
+              <button onClick={() => startEdit(item)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-cyan transition-all"><Edit2 size={14} /></button>
+              <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-destructive transition-all"><Trash2 size={14} /></button>
             </div>
           </div>
         ))}

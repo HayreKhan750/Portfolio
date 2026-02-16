@@ -25,11 +25,11 @@ const ExperienceSection = () => {
   };
 
   return (
-    <section id="experience" className="py-24 px-6">
+    <section id="experience" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
           <h2 className="font-heading text-4xl font-bold mb-2">Experience & <span className="gradient-text">Education</span></h2>
-          <p className="text-muted-foreground">My journey and credentials.</p>
+          <p className="text-muted-foreground">My academic journey and credentials.</p>
         </motion.div>
 
         {(["education", "work", "award"] as const).map(type => {
@@ -37,11 +37,11 @@ const ExperienceSection = () => {
           if (list.length === 0) return null;
           const Icon = typeIcons[type];
           return (
-            <div key={type} className="mb-8">
-              <h3 className="font-heading text-xl font-semibold mb-4 flex items-center gap-2">
+            <div key={type} className="mb-10">
+              <h3 className="font-heading text-xl font-semibold mb-5 flex items-center gap-2">
                 <Icon size={20} className="text-cyan" /> {typeLabels[type]}
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {list.map((item, i) => (
                   <motion.div
                     key={item.id}
