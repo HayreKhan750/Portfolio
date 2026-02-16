@@ -112,7 +112,7 @@ const ProjectsTab = () => {
       <div className="flex items-center justify-between">
         <h2 className="font-heading text-2xl font-bold">Projects ({projects.length})</h2>
         <button onClick={() => showForm ? resetForm() : setShowForm(true)} className="btn-gradient flex items-center gap-2 text-sm !px-4 !py-2">
-          {showForm ? <><X size={16} /> Cancel</> : <><Plus size={16} /> Add</>}
+          {showForm ? <><X size={16} /> Cancel</> : <><Plus size={16} /> New Project</>}
         </button>
       </div>
 
@@ -157,10 +157,20 @@ const ProjectsTab = () => {
 
       <div className="space-y-2">
         {projects.map(p => (
-          <div key={p.id} className="glass-card p-5 flex items-center justify-between">
-            <div>
-              <p className="font-semibold text-sm">{p.title} {p.featured && <span className="text-xs text-cyan ml-1">★ Featured</span>}</p>
-              <p className="text-xs text-muted-foreground line-clamp-1">{p.description}</p>
+          <div key={p.id} className="glass-card p-5 flex items-center justify-between group">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <p className="font-semibold text-sm">{p.title}</p>
+                {p.featured && <span className="text-xs text-cyan">★ Featured</span>}
+              </div>
+              <p className="text-xs text-muted-foreground line-clamp-1 mb-2">{p.description}</p>
+              {p.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {p.tags.map(tag => (
+                    <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-muted-foreground">{tag}</span>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="flex gap-2">
               <button onClick={() => startEdit(p)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-cyan transition-all"><Edit2 size={14} /></button>

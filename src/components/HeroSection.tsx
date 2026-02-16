@@ -30,7 +30,7 @@ const HeroSection = () => {
             <span className="gradient-text">Hayredin</span>{" "}
             <span className="text-foreground">Mohammed</span>
           </h1>
-          <p className="text-lg text-muted-foreground mb-6">{profile?.headline || ""}</p>
+          
           <p className="text-muted-foreground text-base max-w-md mb-8 leading-relaxed">
             {profile?.bio || "Loading..."}
           </p>
@@ -63,7 +63,7 @@ const HeroSection = () => {
             <div className="absolute inset-8 rounded-full bg-gradient-to-br from-cyan/10 to-violet/10 backdrop-blur-sm border border-white/10 animate-float" />
             <div className="absolute inset-16 rounded-full bg-gradient-to-br from-cyan/30 to-violet/30 blur-xl animate-float" style={{ animationDelay: "1s" }} />
             {avatarUrl && (
-              <div className="absolute inset-12 lg:inset-16 rounded-full overflow-hidden flex items-center justify-center z-10">
+              <div className="absolute inset-12 lg:inset-16 rounded-full overflow-hidden flex items-center justify-center z-10 animate-float">
                 <img
                   src={avatarUrl}
                   alt="Profile"

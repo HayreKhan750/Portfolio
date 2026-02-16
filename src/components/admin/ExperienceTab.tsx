@@ -79,13 +79,13 @@ const ExperienceTab = () => {
           <Input value={form.organization} onChange={e => setForm({ ...form, organization: e.target.value })} placeholder="Organization" className="bg-zinc-900 border-white/10" required />
           <Input value={form.date_range} onChange={e => setForm({ ...form, date_range: e.target.value })} placeholder="Date Range (e.g. 2023-2027)" className="bg-zinc-900 border-white/10" required />
           <Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Description" className="bg-zinc-900 border-white/10 resize-none" />
-          <div className="flex gap-4">
-            <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-foreground">
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Type</label>
+            <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-cyan/50">
               <option value="education">Education</option>
               <option value="work">Work</option>
               <option value="award">Award</option>
             </select>
-            <Input type="number" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} placeholder="Sort Order" className="bg-zinc-900 border-white/10 w-28" />
           </div>
           <button type="submit" className="btn-gradient flex items-center gap-2 text-sm">
             <Save size={16} /> {editing ? "Update" : "Add"}

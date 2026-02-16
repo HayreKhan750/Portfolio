@@ -16,7 +16,7 @@ const CertificatesTab = () => {
   const [items, setItems] = useState<Certificate[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", issuer: "", date: "" });
+  const [form, setForm] = useState({ name: "", issuer: "", date: "", proof_url: "" });
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -44,6 +44,7 @@ const CertificatesTab = () => {
 
     const payload: any = { name: form.name, issuer: form.issuer, date: form.date || null };
     if (proofUrl) payload.proof_url = proofUrl;
+    else if (form.proof_url) payload.proof_url = form.proof_url;
 
     if (editing) {
       const { error } = await supabase.from("certificates").update(payload).eq("id", editing);
@@ -60,7 +61,7 @@ const CertificatesTab = () => {
 
   const startEdit = (item: Certificate) => {
     setEditing(item.id);
-    setForm({ name: item.name, issuer: item.issuer, date: item.date || "" });
+    setForm({ name: item.name, issuer: item.issuer, date: item.date || "", proof_url: item.proof_url || "" });
     setShowForm(true);
   };
 
@@ -72,7 +73,7 @@ const CertificatesTab = () => {
 
   const resetForm = () => {
     setShowForm(false); setEditing(null);
-    setForm({ name: "", issuer: "", date: "" }); setProofFile(null);
+    setForm({ name: "", issuer: "", date: "", proof_url: "" }); setProofFile(null);
   };
 
   return (
@@ -80,7 +81,7 @@ const CertificatesTab = () => {
       <div className="flex items-center justify-between">
         <h2 className="font-heading text-2xl font-bold">Certificates ({items.length})</h2>
         <button onClick={() => showForm ? resetForm() : setShowForm(true)} className="btn-gradient flex items-center gap-2 text-sm !px-4 !py-2">
-          {showForm ? <><X size={16} /> Cancel</> : <><Plus size={16} /> Add</>}
+          {showForm ? <><X size={16} /> Cancel</> : <><Plus size={16} /> Add Certificate</>}
         </button>
       </div>
 
@@ -88,11 +89,15 @@ const CertificatesTab = () => {
         <form onSubmit={handleSubmit} className="glass-card p-6 space-y-4">
           <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Certificate Name" className="bg-zinc-900 border-white/10" required />
           <Input value={form.issuer} onChange={e => setForm({ ...form, issuer: e.target.value })} placeholder="Issuer (e.g. DeepLearning.AI)" className="bg-zinc-900 border-white/10" required />
-          <Input value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} placeholder="Date (e.g. 2024)" className="bg-zinc-900 border-white/10" />
-          <label className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm text-muted-foreground hover:bg-white/5 transition-colors cursor-pointer w-fit">
-            <Upload size={16} /> {proofFile ? proofFile.name : "Upload Proof"}
-            <input type="file" accept="image/*,.pdf" onChange={e => setProofFile(e.target.files?.[0] || null)} className="hidden" />
-          </label>
+          <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} placeholder="Date" className="bg-zinc-900 border-white/10" />
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm text-muted-foreground hover:bg-white/5 transition-colors cursor-pointer">
+              <Upload size={16} /> {proofFile ? proofFile.name : "Upload Proof"}
+              <input type="file" accept="image/*,.pdf" onChange={e => setProofFile(e.target.files?.[0] || null)} className="hidden" />
+            </label>
+            <span className="text-xs text-muted-foreground">or</span>
+            <Input value={form.proof_url || ""} onChange={e => setForm({ ...form, proof_url: e.target.value })} placeholder="Proof URL" className="bg-zinc-900 border-white/10 flex-1" />
+          </div>
           <button type="submit" disabled={uploading} className="btn-gradient flex items-center gap-2 text-sm disabled:opacity-50">
             <Save size={16} /> {uploading ? "Uploading..." : editing ? "Update" : "Add"}
           </button>

@@ -42,20 +42,25 @@ const MessagesTab = () => {
       <h2 className="font-heading text-2xl font-bold">Messages ({messages.length})</h2>
       <div className="space-y-3">
         {messages.map(m => (
-          <div key={m.id} className="glass-card p-5">
+          <div key={m.id} className="glass-card p-5 hover:border-white/20 transition-colors">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="font-semibold text-sm">{m.name}</span>
-                  <span className="text-xs text-muted-foreground">{m.email}</span>
-                  <span className="text-xs text-muted-foreground/50 ml-auto shrink-0">{timeAgo(m.created_at)}</span>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan/20 to-violet/20 flex items-center justify-center text-xs font-bold text-cyan shrink-0">
+                    {m.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <span className="font-semibold text-sm block">{m.name}</span>
+                    <span className="text-xs text-muted-foreground">{m.email}</span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground/40 ml-auto shrink-0">{timeAgo(m.created_at)}</span>
                 </div>
-                <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-sm text-muted-foreground">{m.content}</p>
+                <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4 ml-11">
+                  <p className="text-sm text-muted-foreground leading-relaxed">{m.content}</p>
                 </div>
               </div>
-              <button onClick={() => handleDelete(m.id)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-destructive transition-all shrink-0 mt-1">
-                <Trash2 size={16} />
+              <button onClick={() => handleDelete(m.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all shrink-0 mt-1">
+                <Trash2 size={14} />
               </button>
             </div>
           </div>
