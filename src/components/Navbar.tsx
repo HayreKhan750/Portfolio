@@ -1,23 +1,42 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, FileDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   { label: "Work", href: "#work" },
-  { label: "Skills", href: "#skills" },
   { label: "Experience", href: "#experience" },
+  { label: "Certificates", href: "#certificates" },
   { label: "Contact", href: "#contact" },
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
 
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profile").select("*").limit(1).single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const avatarUrl = (profile as any)?.avatar_url;
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-t-0 border-x-0 rounded-none px-6 py-4">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <a href="#" className="font-heading text-2xl font-bold tracking-tight">
-          <span className="text-cyan">H</span>
-          <span className="text-violet">M</span>
+        <a href="#" className="flex items-center gap-3">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover border border-white/20" />
+          ) : (
+            <span className="font-heading text-2xl font-bold tracking-tight">
+              <span className="text-cyan">H</span>
+              <span className="text-violet">M</span>
+            </span>
+          )}
         </a>
 
         {/* Desktop */}
@@ -31,6 +50,16 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+          {profile?.resume_url && (
+            <a
+              href={profile.resume_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-gradient inline-flex items-center gap-2 text-sm !px-4 !py-2"
+            >
+              <FileDown size={14} /> CV
+            </a>
+          )}
         </div>
 
         {/* Mobile toggle */}
