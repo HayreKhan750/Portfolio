@@ -60,7 +60,7 @@ const ProjectsSection = () => {
 
   if (!projects || projects.length === 0) {
     return (
-      <section id="work" className="py-24 px-6">
+      <section id="work" className="py-32 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="font-heading text-4xl font-bold mb-2">Selected <span className="gradient-text">Work</span></h2>
           <p className="text-muted-foreground">Projects coming soon.</p>
@@ -70,9 +70,9 @@ const ProjectsSection = () => {
   }
 
   return (
-    <section id="work" className="py-24 px-6">
+    <section id="work" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
           <h2 className="font-heading text-4xl font-bold mb-2">Selected <span className="gradient-text">Work</span></h2>
           <p className="text-muted-foreground">Projects that showcase my capabilities.</p>
         </motion.div>
@@ -110,7 +110,7 @@ const ProjectsSection = () => {
 
       {/* Modal with media carousel */}
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-6" onClick={() => setSelected(null)}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6" onClick={() => setSelected(null)}>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

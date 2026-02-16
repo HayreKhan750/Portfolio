@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Mail, Phone, Github, Linkedin, Globe } from "lucide-react";
+import { Mail, Phone, Github, Linkedin, Globe, Twitter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -18,9 +18,12 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const iconMap: Record<string, any> = {
-  Mail, Phone, Github, Linkedin, Globe,
-  mail: Mail, phone: Phone, github: Github, linkedin: Linkedin, globe: Globe,
+  Mail, Phone, Github, Linkedin, Globe, Twitter,
+  mail: Mail, phone: Phone, github: Github, linkedin: Linkedin, globe: Globe, twitter: Twitter,
+  X: Twitter, x: Twitter,
 };
+
+const socialPlatforms = ["github", "linkedin", "x", "twitter"];
 
 const ContactSection = () => {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) });
@@ -46,10 +49,15 @@ const ContactSection = () => {
     return iconMap[iconName] || iconMap[iconName.toLowerCase()] || Globe;
   };
 
+  const isSocial = (platform: string) => socialPlatforms.includes(platform.toLowerCase());
+
+  const socials = contactMethods?.filter(m => isSocial(m.platform)) || [];
+  const directContacts = contactMethods?.filter(m => !isSocial(m.platform)) || [];
+
   return (
-    <section id="contact" className="py-24 px-6">
+    <section id="contact" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
           <h2 className="font-heading text-4xl font-bold mb-2">Get in <span className="gradient-text">Touch</span></h2>
           <p className="text-muted-foreground">Have a project or idea? Let's talk.</p>
         </motion.div>
@@ -74,22 +82,44 @@ const ContactSection = () => {
           </motion.form>
 
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="space-y-4">
-            {contactMethods && contactMethods.length > 0 ? (
-              contactMethods.map((method) => {
-                const Icon = getIcon(method.icon);
-                return (
-                  <a key={method.id} href={method.url} target="_blank" rel="noopener noreferrer" className="glass-card p-5 flex items-center gap-4 hover:border-cyan/30 transition-all duration-300 block">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-cyan/20 to-violet/20">
-                      <Icon className="text-cyan" size={20} />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">{method.platform}</p>
-                      <p className="text-foreground text-sm">{method.url.replace(/^mailto:/, "").replace(/^tel:/, "")}</p>
-                    </div>
-                  </a>
-                );
-              })
-            ) : (
+            {/* Direct contacts (Email, Phone) with text */}
+            {directContacts.map((method) => {
+              const Icon = getIcon(method.icon);
+              return (
+                <a key={method.id} href={method.url} target="_blank" rel="noopener noreferrer" className="glass-card p-5 flex items-center gap-4 hover:border-cyan/30 transition-all duration-300 block">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-cyan/20 to-violet/20">
+                    <Icon className="text-cyan" size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">{method.platform}</p>
+                    <p className="text-foreground text-sm">{method.url.replace(/^mailto:/, "").replace(/^tel:/, "")}</p>
+                  </div>
+                </a>
+              );
+            })}
+
+            {/* Social icons only */}
+            {socials.length > 0 && (
+              <div className="flex gap-3 pt-2">
+                {socials.map((method) => {
+                  const Icon = getIcon(method.icon);
+                  return (
+                    <a
+                      key={method.id}
+                      href={method.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glass-card p-4 hover:border-cyan/30 transition-all duration-300 group"
+                      title={method.platform}
+                    >
+                      <Icon className="text-muted-foreground group-hover:text-cyan transition-colors" size={22} />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+
+            {(!contactMethods || contactMethods.length === 0) && (
               <p className="text-muted-foreground text-sm">Contact info coming soon.</p>
             )}
           </motion.div>

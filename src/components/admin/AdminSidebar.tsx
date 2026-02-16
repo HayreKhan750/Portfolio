@@ -1,4 +1,4 @@
-import { User, Briefcase, FolderOpen, Award, Phone, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, User, Briefcase, FolderOpen, Award, Code2, Phone, MessageSquare, LogOut } from "lucide-react";
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -7,10 +7,12 @@ interface AdminSidebarProps {
 }
 
 const tabs = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "profile", label: "Profile", icon: User },
   { id: "experience", label: "Experience", icon: Briefcase },
   { id: "projects", label: "Projects", icon: FolderOpen },
   { id: "certificates", label: "Certificates", icon: Award },
+  { id: "skills", label: "Skills", icon: Code2 },
   { id: "contacts", label: "Contacts", icon: Phone },
   { id: "messages", label: "Messages", icon: MessageSquare },
 ];

@@ -16,13 +16,13 @@ const CertificatesSection = () => {
   if (!certificates || certificates.length === 0) return null;
 
   return (
-    <section id="certificates" className="py-24 px-6">
+    <section id="certificates" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-12"
+          className="mb-16"
         >
           <h2 className="font-heading text-4xl font-bold mb-2">
             <span className="gradient-text">Certificates</span>
