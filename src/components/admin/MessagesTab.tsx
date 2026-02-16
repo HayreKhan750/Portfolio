@@ -59,7 +59,7 @@ const MessagesTab = () => {
                   <p className="text-sm text-muted-foreground leading-relaxed">{m.content}</p>
                 </div>
               </div>
-              <button onClick={() => handleDelete(m.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all shrink-0 mt-1">
+              <button onClick={() => handleDelete(m.id)} className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-all shrink-0 mt-1">
                 <Trash2 size={14} />
               </button>
             </div>

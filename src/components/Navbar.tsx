@@ -4,6 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+const normalizeUrl = (url: string) => {
+  if (!url) return url;
+  if (/^(https?:\/\/|mailto:|tel:)/.test(url)) return url;
+  return `https://${url}`;
+};
+
 const navLinks = [
   { label: "Work", href: "#work" },
   { label: "Skills", href: "#skills" },
@@ -24,8 +30,6 @@ const Navbar = () => {
     },
   });
 
-  const avatarUrl = (profile as any)?.avatar_url;
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-t-0 border-x-0 rounded-none px-6 py-4">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -41,7 +45,7 @@ const Navbar = () => {
             <a key={link.href} href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
           ))}
           {profile?.resume_url && (
-            <a href={profile.resume_url} target="_blank" rel="noopener noreferrer" className="btn-gradient inline-flex items-center gap-2 text-sm !px-4 !py-2">
+            <a href={normalizeUrl(profile.resume_url)} target="_blank" rel="noopener noreferrer" className="btn-gradient inline-flex items-center gap-2 text-sm !px-4 !py-2">
               <FileDown size={14} /> CV
             </a>
           )}

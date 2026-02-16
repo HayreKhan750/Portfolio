@@ -30,23 +30,24 @@ const SkillsSection = () => {
   return (
     <section id="skills" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
           <h2 className="font-heading text-4xl font-bold mb-2">
             Technical <span className="gradient-text">Arsenal</span>
           </h2>
-          <p className="text-muted-foreground">Skills & expertise I bring to every project.</p>
+          <p className="text-muted-foreground">Tools and technologies I work with.</p>
         </motion.div>
 
-        <div className="space-y-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Object.entries(grouped).map(([category, items]) => (
-            <div key={category}>
+            <motion.div
+              key={category}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="glass-card p-6"
+            >
               <h3 className="font-heading text-lg font-semibold text-cyan mb-4">{category}</h3>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2.5">
                 {items.map((skill, i) => (
                   <motion.div
                     key={skill.id}
@@ -55,7 +56,7 @@ const SkillsSection = () => {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.05 }}
                     whileHover={{ scale: 1.05 }}
-                    className="glass-card px-5 py-3 cursor-default group hover:border-cyan/40 transition-all duration-300"
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 cursor-default group hover:border-cyan/40 transition-all duration-300"
                     style={{ boxShadow: "0 0 0 0 transparent" }}
                     onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 16px hsl(183 100% 50% / 0.2), 0 0 32px hsl(282 99% 53% / 0.1)"; }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 0 transparent"; }}
@@ -75,7 +76,7 @@ const SkillsSection = () => {
                   </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

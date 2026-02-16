@@ -25,6 +25,19 @@ const iconMap: Record<string, any> = {
 
 const socialPlatforms = ["github", "linkedin", "x", "twitter"];
 
+const normalizeUrl = (url: string, platform: string) => {
+  if (!url) return url;
+  const lower = platform.toLowerCase();
+  if (lower === "email" || lower === "mail") {
+    return url.startsWith("mailto:") ? url : `mailto:${url}`;
+  }
+  if (lower === "phone") {
+    return url.startsWith("tel:") ? url : `tel:${url}`;
+  }
+  if (/^(https?:\/\/|mailto:|tel:)/.test(url)) return url;
+  return `https://${url}`;
+};
+
 const ContactSection = () => {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) });
 
@@ -50,6 +63,7 @@ const ContactSection = () => {
   };
 
   const isSocial = (platform: string) => socialPlatforms.includes(platform.toLowerCase());
+  const isEmailOrPhone = (platform: string) => ["email", "mail", "phone"].includes(platform.toLowerCase());
 
   const socials = contactMethods?.filter(m => isSocial(m.platform)) || [];
   const directContacts = contactMethods?.filter(m => !isSocial(m.platform)) || [];
@@ -85,8 +99,15 @@ const ContactSection = () => {
             {/* Direct contacts (Email, Phone) with text */}
             {directContacts.map((method) => {
               const Icon = getIcon(method.icon);
+              const href = normalizeUrl(method.url, method.platform);
+              const isContact = isEmailOrPhone(method.platform);
               return (
-                <a key={method.id} href={method.url} target="_blank" rel="noopener noreferrer" className="glass-card p-5 flex items-center gap-4 hover:border-cyan/30 transition-all duration-300 block">
+                <a
+                  key={method.id}
+                  href={href}
+                  {...(!isContact ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="glass-card p-5 flex items-center gap-4 hover:border-cyan/30 transition-all duration-300 block"
+                >
                   <div className="p-3 rounded-xl bg-gradient-to-br from-cyan/20 to-violet/20">
                     <Icon className="text-cyan" size={20} />
                   </div>
@@ -103,10 +124,11 @@ const ContactSection = () => {
               <div className="flex gap-3 pt-2">
                 {socials.map((method) => {
                   const Icon = getIcon(method.icon);
+                  const href = normalizeUrl(method.url, method.platform);
                   return (
                     <a
                       key={method.id}
-                      href={method.url}
+                      href={href}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="glass-card p-4 hover:border-cyan/30 transition-all duration-300 group"

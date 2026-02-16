@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit2, X, Save, Image } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Save, Image, ExternalLink, Github } from "lucide-react";
 
 interface Project {
   id: string;
@@ -23,6 +23,12 @@ interface Media {
   caption: string | null;
   sort_order: number;
 }
+
+const normalizeUrl = (url: string) => {
+  if (!url) return url;
+  if (/^(https?:\/\/)/.test(url)) return url;
+  return `https://${url}`;
+};
 
 const ProjectsTab = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -173,8 +179,18 @@ const ProjectsTab = () => {
               )}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => startEdit(p)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-cyan transition-all"><Edit2 size={14} /></button>
-              <button onClick={() => handleDelete(p.id)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-destructive transition-all"><Trash2 size={14} /></button>
+              {p.github_url && (
+                <a href={normalizeUrl(p.github_url)} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white/5 hover:bg-cyan/20 text-muted-foreground hover:text-cyan transition-all">
+                  <Github size={14} />
+                </a>
+              )}
+              {p.live_url && (
+                <a href={normalizeUrl(p.live_url)} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white/5 hover:bg-cyan/20 text-muted-foreground hover:text-cyan transition-all">
+                  <ExternalLink size={14} />
+                </a>
+              )}
+              <button onClick={() => startEdit(p)} className="p-2 rounded-lg bg-white/5 hover:bg-cyan/20 text-muted-foreground hover:text-cyan transition-all"><Edit2 size={14} /></button>
+              <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-all"><Trash2 size={14} /></button>
             </div>
           </div>
         ))}

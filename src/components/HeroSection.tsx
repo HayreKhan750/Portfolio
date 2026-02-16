@@ -3,6 +3,12 @@ import { ArrowDown, FileDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+const normalizeUrl = (url: string) => {
+  if (!url) return url;
+  if (/^(https?:\/\/|mailto:|tel:)/.test(url)) return url;
+  return `https://${url}`;
+};
+
 const HeroSection = () => {
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -14,6 +20,10 @@ const HeroSection = () => {
   });
 
   const avatarUrl = (profile as any)?.avatar_url;
+  const displayName = (profile as any)?.name || "Hayredin Mohammed";
+  const nameParts = displayName.split(" ");
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || "";
 
   return (
     <section className="relative min-h-screen flex items-center pt-20 px-6">
@@ -27,8 +37,8 @@ const HeroSection = () => {
             {profile?.headline || "AI / ML Engineer"}
           </p>
           <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight mb-3">
-            <span className="gradient-text">Hayredin</span>{" "}
-            <span className="text-foreground">Mohammed</span>
+            <span className="gradient-text">{firstName}</span>{" "}
+            <span className="text-foreground">{lastName}</span>
           </h1>
           
           <p className="text-muted-foreground text-base max-w-md mb-8 leading-relaxed">
@@ -40,7 +50,7 @@ const HeroSection = () => {
             </a>
             {profile?.resume_url && (
               <a
-                href={profile.resume_url}
+                href={normalizeUrl(profile.resume_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-foreground hover:bg-white/5 transition-colors font-medium"
@@ -51,19 +61,19 @@ const HeroSection = () => {
           </div>
         </motion.div>
 
-        {/* Animated sphere with avatar */}
+        {/* Animated sphere with avatar - single parent float */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
           className="hidden md:flex items-center justify-center"
         >
-          <div className="relative w-72 h-72 lg:w-96 lg:h-96">
+          <div className="relative w-72 h-72 lg:w-96 lg:h-96 animate-float">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan/20 to-violet/20 animate-pulse-glow blur-3xl" />
-            <div className="absolute inset-8 rounded-full bg-gradient-to-br from-cyan/10 to-violet/10 backdrop-blur-sm border border-white/10 animate-float" />
-            <div className="absolute inset-16 rounded-full bg-gradient-to-br from-cyan/30 to-violet/30 blur-xl animate-float" style={{ animationDelay: "1s" }} />
+            <div className="absolute inset-8 rounded-full bg-gradient-to-br from-cyan/10 to-violet/10 backdrop-blur-sm border border-white/10" />
+            <div className="absolute inset-16 rounded-full bg-gradient-to-br from-cyan/30 to-violet/30 blur-xl" style={{ animationDelay: "1s" }} />
             {avatarUrl && (
-              <div className="absolute inset-12 lg:inset-16 rounded-full overflow-hidden flex items-center justify-center z-10 animate-float">
+              <div className="absolute inset-12 lg:inset-16 rounded-full overflow-hidden flex items-center justify-center z-10">
                 <img
                   src={avatarUrl}
                   alt="Profile"
