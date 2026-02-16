@@ -1,150 +1,115 @@
 
 
-# Skills System + Premium UI Overhaul
+# Premium UI Polish + Fixes
 
 ## Overview
-Add a full Skills Management System (database to admin to public display) and apply premium UI polish across the entire application -- custom favicon, z-index fixes, custom scrollbar, breathable spacing, hero orb with avatar, and admin dashboard stats.
+Apply targeted fixes and polish across the public site and admin dashboard based on user feedback and reference images. No database changes needed -- the `skills` table and all other tables already exist.
 
 ---
 
-## Phase 1: Database — `skills` Table
+## 1. Hero Section Fix
 
-Create a new `skills` table with RLS policies:
+**Problem:** The headline text ("AI / ML Engineer") is showing both above the name AND as a duplicate line below it. The user wants:
+- Small sub-headline above the main name (e.g., "AI / ML Engineer") -- this should be editable from admin Profile tab
+- The main name stays as "Hayredin Mohammed"
+- Remove the duplicate `profile.headline` line below the name (line 33 currently repeats it)
+- Avatar must appear inside the glowing orb with smooth float animation matching the sphere layers
 
-```text
-skills
-  id          uuid PK (gen_random_uuid())
-  category    text NOT NULL
-  name        text NOT NULL
-  proficiency int  DEFAULT 0
-  sort_order  int  DEFAULT 0
-  created_at  timestamptz DEFAULT now()
-```
-
-RLS:
-- Public SELECT (true)
-- Admin INSERT/UPDATE/DELETE via `has_role(auth.uid(), 'admin')`
+**Changes to `HeroSection.tsx`:**
+- Remove line 33 (duplicate headline)
+- Ensure the avatar container shares the same `animate-float` class as the orb layers so they move in sync
+- Keep the feathered radial mask on the avatar
 
 ---
 
-## Phase 2: Global UI Fixes
+## 2. Navbar -- Always Show "HM" Logo
 
-### Favicon
-- Replace the `<link rel="icon">` in `index.html` with an inline SVG data URI featuring the "HM" monogram in cyan/violet gradient
+**Problem:** The navbar replaces the "HM" text with the avatar image. User wants "HM" logo always visible.
 
-### Custom Scrollbar (in `src/index.css`)
-- Thin scrollbar with cyan accent thumb and dark track
-- WebKit + Firefox scrollbar styling
-
-### Z-Index Hierarchy
-- Navbar stays at `z-50`
-- All modals/dialogs get `z-[100]` with `bg-black/80 backdrop-blur-sm` backdrop
-- Fix the project modal in `ProjectsSection.tsx` (currently `z-50`, bump to `z-[100]`)
-
-### Breathable Spacing
-- Increase section padding from `py-24` to `py-32` across all public sections
-- Increase `mb-12` headers to `mb-16`
+**Changes to `Navbar.tsx`:**
+- Always render the "HM" gradient text logo (remove the conditional that swaps it for avatar)
+- Keep the CV download button
 
 ---
 
-## Phase 3: Public Frontend Changes
+## 3. Admin Dashboard -- UI Matching Reference Images
 
-### Hero Section (`HeroSection.tsx`)
-- Fetch `profile.avatar_url`
-- Place the avatar image centered inside the glowing sphere with a circular mask and feathered edges
-- Show the `headline` as a sub-headline under the main name text
-- Keep existing gradient text and CTA buttons
+### A. Projects Tab (`ProjectsTab.tsx`)
+Match the reference image layout:
+- Header: "Projects (N)" with button text "New Project" (not just "Add")
+- Card rows: Increase padding, show title + featured star + tags as small pills
+- Edit/Delete buttons: Icon-only with subtle glow hover backgrounds
+- Edit form displayed as a modal/overlay (matching reference image with dark background, clean form fields)
 
-### New "Technical Arsenal" Section (`SkillsSection.tsx`)
-- Insert between Projects and Experience in `Index.tsx`
-- Fetch from `skills` table via TanStack Query
-- Group by `category` with category labels
-- Display as glassmorphic "tech pills" with neon glow on hover and scale animation
-- Show thin progress bar below each skill if `proficiency > 0`
+### B. Certificates Tab (`CertificatesTab.tsx`)
+Match the reference image:
+- Header: "Certificates (N)" with "Add Certificate" button
+- Card rows: Show name, issuer, and date on the subtitle line
+- Action buttons: External link icon (for proof_url) + Edit + Delete
+- Edit form: Add proof URL text input field alongside the upload button, add date picker-style input
 
-### Navbar
-- Add "Skills" link pointing to `#skills`
+### C. Experience Tab (`ExperienceTab.tsx`)
+- Fix dropdown visibility: The `<select>` already has `bg-zinc-900` but needs explicit `text-foreground` styling
+- Remove the sort_order number input from the visible form (keep it internal or move to advanced)
+- Clean layout matching the glassmorphic style
 
-### Experience Section
-- Change subtitle from "My journey and credentials." to "My academic journey and credentials."
-- Increase vertical padding between items
+### D. Contacts Tab (`ContactsTab.tsx`)
+Match the reference image:
+- Simplified inline add form: Platform name + URL + Icon dropdown in a single row with "+" button
+- List items show icon + platform name + URL with just a delete button
+- Remove sort_order from the visible form
+- Remove the separate form layout, use the inline approach from the reference
 
-### Contact Section
-- For social platforms (GitHub, LinkedIn, X/Twitter), show icon-only buttons (no text labels)
-- For Email and Phone, keep readable text
-- Keep existing contact form unchanged
+### E. Messages Tab (`MessagesTab.tsx`)
+- Already has "Inbox Card" layout -- polish the styling to be more premium
+- Ensure proper spacing and glass effects
 
-### Certificates Section
-- Increase spacing to match breathable layout
+### F. Skills Tab (`SkillsTab.tsx`)
+- Already working well, no major changes needed
 
----
-
-## Phase 4: Admin Dashboard Overhaul
-
-### Dashboard Home with Stats (`Admin.tsx`)
-- Default tab becomes "dashboard" showing 4 summary stat cards:
-  - Total Projects, Total Certificates, Total Skills, Total Experience
-- Each card: glassmorphic, large number, small label, gradient icon
-
-### Sidebar (`AdminSidebar.tsx`)
-- Add "Skills" tab with `Code2` icon
-- Add "Dashboard" tab with `LayoutDashboard` icon at the top
-
-### New Skills Tab (`SkillsTab.tsx`)
-- List all skills grouped by category with colored category badges
-- Edit/Delete icon buttons per skill
-- Add/Edit modal form with:
-  - Category (text input or select from existing categories)
-  - Name (text input)
-  - Proficiency (slider 0-100)
-  - Sort Order (number input)
-- Validated with `react-hook-form` + `zod`
-
-### List View Headers (all tabs)
-- Update headers to show counts: "Projects (4)", "Skills (8)", etc.
-- Increase row padding for premium feel
-- Style Edit/Delete as icon-only buttons with subtle glow backgrounds
-
-### Certificates Tab
-- Add external link icon button in action row when `proof_url` exists
-
-### Messages Tab — Inbox Cards
-- Redesign to card layout: top row with Name + Email + faded timestamp, body in lighter glass container, delete button on right
-
-### Dropdown Fix
-- All `<select>` elements get `bg-zinc-900` background for readability
-
-### Profile Tab
-- Ensure headline input is clearly labeled and editable
+### G. Profile Tab (`ProfileTab.tsx`)
+- Already has headline editing -- ensure label clearly says "Headline (displayed above your name on Hero section)"
 
 ---
 
-## Phase 5: Files Summary
+## 4. Contact Section (Public) -- Icon-Only Socials
 
-### New Files
-- `src/components/SkillsSection.tsx` — Public skills display
-- `src/components/admin/SkillsTab.tsx` — Admin skills CRUD
-- `src/components/admin/DashboardTab.tsx` — Stats overview
+Already implemented correctly. Social links show as icon-only, direct contacts (Email, Phone) show with text. No changes needed.
 
-### Modified Files
-- `index.html` — New SVG favicon
-- `src/index.css` — Custom scrollbar styles
-- `src/pages/Index.tsx` — Add SkillsSection, increase spacing
-- `src/components/Navbar.tsx` — Add Skills nav link
-- `src/components/HeroSection.tsx` — Avatar in orb, headline display
-- `src/components/ExperienceSection.tsx` — Updated subtitle, increased padding
-- `src/components/ContactSection.tsx` — Icon-only socials for certain platforms
-- `src/components/CertificatesSection.tsx` — Breathable spacing
-- `src/components/ProjectsSection.tsx` — Modal z-index fix, spacing
-- `src/pages/Admin.tsx` — Add dashboard + skills tabs
-- `src/components/admin/AdminSidebar.tsx` — Add Dashboard + Skills entries
-- `src/components/admin/ProjectsTab.tsx` — Header count, premium rows
-- `src/components/admin/ExperienceTab.tsx` — Header count, premium rows, dropdown fix
-- `src/components/admin/CertificatesTab.tsx` — Header count, link button, premium rows
-- `src/components/admin/ContactsTab.tsx` — Header count, premium rows, dropdown fix
-- `src/components/admin/MessagesTab.tsx` — Inbox card redesign
-- `src/components/admin/ProfileTab.tsx` — Headline label clarity
+---
 
-### Database Migration
-- Create `skills` table with RLS policies
+## 5. Experience Section Subtitle
+
+Already says "My academic journey and credentials." -- no change needed.
+
+---
+
+## 6. Links Must Work
+
+Ensure all links function properly:
+- Download CV button uses `profile.resume_url` (already implemented with `target="_blank"`)
+- Certificate "View Proof" links use `cert.proof_url` (already implemented)
+- Contact links use the stored URLs (already implemented)
+- Project GitHub/Live Demo links in modal (already implemented)
+
+---
+
+## Technical Changes Summary
+
+### Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/components/HeroSection.tsx` | Remove duplicate headline line; sync avatar float animation with orb |
+| `src/components/Navbar.tsx` | Always show "HM" logo text, never replace with avatar |
+| `src/components/admin/ProjectsTab.tsx` | Button text "New Project"; premium card rows with tags as pills; icon buttons with glow hover |
+| `src/components/admin/CertificatesTab.tsx` | Button text "Add Certificate"; add proof_url text input; external link button in action row; date input type |
+| `src/components/admin/ExperienceTab.tsx` | Fix select dropdown styling; remove sort_order from visible form |
+| `src/components/admin/ContactsTab.tsx` | Inline add form (platform + URL + icon in one row); simplified list with icon + delete only |
+| `src/components/admin/MessagesTab.tsx` | Enhanced inbox card styling with better spacing |
+| `src/components/admin/ProfileTab.tsx` | Update headline label text for clarity |
+
+### No Files to Create or Delete
+
+### No Database Changes Required
 
