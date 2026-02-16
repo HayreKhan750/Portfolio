@@ -128,6 +128,7 @@ export type Database = {
           bio: string
           headline: string
           id: string
+          name: string | null
           resume_url: string | null
         }
         Insert: {
@@ -135,6 +136,7 @@ export type Database = {
           bio?: string
           headline?: string
           id?: string
+          name?: string | null
           resume_url?: string | null
         }
         Update: {
@@ -142,6 +144,7 @@ export type Database = {
           bio?: string
           headline?: string
           id?: string
+          name?: string | null
           resume_url?: string | null
         }
         Relationships: []

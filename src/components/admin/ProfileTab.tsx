@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Upload, Save } from "lucide-react";
 
 const ProfileTab = () => {
+  const [name, setName] = useState("");
   const [headline, setHeadline] = useState("");
   const [bio, setBio] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
@@ -21,10 +22,11 @@ const ProfileTab = () => {
     const { data } = await supabase.from("profile").select("*").limit(1).single();
     if (data) {
       setProfileId(data.id);
+      setName((data as any).name || "");
       setHeadline(data.headline || "");
       setBio(data.bio || "");
       setResumeUrl(data.resume_url || "");
-      setAvatarUrl((data as any).avatar_url || "");
+      setAvatarUrl(data.avatar_url || "");
     }
   };
 
@@ -54,7 +56,7 @@ const ProfileTab = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    const payload = { headline, bio, resume_url: resumeUrl, avatar_url: avatarUrl } as any;
+    const payload = { name, headline, bio, resume_url: resumeUrl, avatar_url: avatarUrl } as any;
     
     let error;
     if (profileId) {
@@ -85,7 +87,11 @@ const ProfileTab = () => {
 
       <div className="space-y-4">
         <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Headline (displayed above your name on Hero section)</label>
+          <label className="text-sm text-muted-foreground mb-1 block">Display Name (shown on Hero section)</label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Hayredin Mohammed" className="bg-zinc-900 border-white/10" />
+        </div>
+        <div>
+          <label className="text-sm text-muted-foreground mb-1 block">Sub-headline (small text above your name on Hero)</label>
           <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. AI / ML Engineer" className="bg-zinc-900 border-white/10" />
         </div>
         <div>

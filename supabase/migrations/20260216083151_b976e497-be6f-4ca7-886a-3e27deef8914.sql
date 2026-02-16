@@ -1,0 +1,1 @@
+ALTER TABLE public.profile ADD COLUMN name text DEFAULT 'Hayredin Mohammed';

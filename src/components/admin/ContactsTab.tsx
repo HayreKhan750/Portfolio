@@ -29,7 +29,17 @@ const ContactsTab = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.platform || !form.url) return;
-    const payload = { platform: form.platform, url: form.url, icon: form.icon || null, sort_order: items.length };
+    
+    // Auto-prepend https:// for non-email/phone URLs
+    let url = form.url;
+    const lower = form.platform.toLowerCase();
+    if (lower !== "email" && lower !== "mail" && lower !== "phone") {
+      if (!/^(https?:\/\/|mailto:|tel:)/.test(url)) {
+        url = `https://${url}`;
+      }
+    }
+    
+    const payload = { platform: form.platform, url, icon: form.icon || null, sort_order: items.length };
 
     if (editing) {
       const { error } = await supabase.from("contact_methods").update(payload).eq("id", editing);
@@ -100,9 +110,9 @@ const ContactsTab = () => {
               <span className="font-medium text-sm">{item.platform}</span>
               <span className="text-xs text-muted-foreground truncate max-w-[200px]">{item.url}</span>
             </div>
-            <div className="flex gap-1.5">
-              <button onClick={() => startEdit(item)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-cyan transition-all"><Edit2 size={14} /></button>
-              <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-destructive transition-all"><Trash2 size={14} /></button>
+            <div className="flex gap-2">
+              <button onClick={() => startEdit(item)} className="p-2 rounded-lg bg-white/5 hover:bg-cyan/20 text-muted-foreground hover:text-cyan transition-all"><Edit2 size={14} /></button>
+              <button onClick={() => handleDelete(item.id)} className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-all"><Trash2 size={14} /></button>
             </div>
           </div>
         ))}

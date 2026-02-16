@@ -23,6 +23,12 @@ interface Media {
   sort_order: number;
 }
 
+const normalizeUrl = (url: string) => {
+  if (!url) return url;
+  if (/^(https?:\/\/)/.test(url)) return url;
+  return `https://${url}`;
+};
+
 const ProjectsSection = () => {
   const [selected, setSelected] = useState<Project | null>(null);
   const [selectedMedia, setSelectedMedia] = useState<Media[]>([]);
@@ -108,9 +114,9 @@ const ProjectsSection = () => {
         </div>
       </div>
 
-      {/* Modal with media carousel */}
+      {/* Modal - z-[200] to appear above navbar */}
       {selected && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6" onClick={() => setSelected(null)}>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6" onClick={() => setSelected(null)}>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -119,7 +125,6 @@ const ProjectsSection = () => {
           >
             <button onClick={() => setSelected(null)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"><X size={20} /></button>
 
-            {/* Media carousel */}
             {selectedMedia.length > 0 && (
               <div className="relative mb-6">
                 {selectedMedia[mediaIndex].type === "video" ? (
@@ -145,12 +150,12 @@ const ProjectsSection = () => {
             </div>
             <div className="flex gap-3">
               {selected.github_url && (
-                <a href={selected.github_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm hover:bg-white/5 transition-colors">
+                <a href={normalizeUrl(selected.github_url)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm hover:bg-white/5 transition-colors">
                   <Github size={16} /> GitHub
                 </a>
               )}
               {selected.live_url && (
-                <a href={selected.live_url} target="_blank" rel="noopener noreferrer" className="btn-gradient inline-flex items-center gap-2 text-sm !px-4 !py-2">
+                <a href={normalizeUrl(selected.live_url)} target="_blank" rel="noopener noreferrer" className="btn-gradient inline-flex items-center gap-2 text-sm !px-4 !py-2">
                   <ExternalLink size={16} /> Live Demo
                 </a>
               )}
