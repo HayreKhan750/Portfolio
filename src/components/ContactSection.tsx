@@ -47,8 +47,11 @@ const ContactSection = () => {
     queryKey: ["contact_methods"],
     queryFn: async () => {
       const { data, error } = await supabase.from("contact_methods").select("*").order("sort_order");
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching contact methods:", error);
+        return [];
+      }
+      return data || [];
     },
   });
 

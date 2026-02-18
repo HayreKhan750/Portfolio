@@ -47,7 +47,11 @@ const ProjectsTab = () => {
   };
 
   const fetchMedia = async (projectId: string) => {
-    const { data } = await supabase.from("project_media").select("*").eq("project_id", projectId).order("sort_order");
+    const { data, error } = await supabase.from("project_media").select("*").eq("project_id", projectId).order("sort_order");
+    if (error) {
+      console.error("Error fetching project media:", error);
+      return;
+    }
     if (data) setExistingMedia(data);
   };
 

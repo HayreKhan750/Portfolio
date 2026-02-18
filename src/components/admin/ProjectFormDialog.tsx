@@ -14,12 +14,10 @@ import { toast } from 'sonner';
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
-  image_url: z.string().url().optional().or(z.literal('')),
-  technologies: z.string().optional(),
-  project_url: z.string().url().optional().or(z.literal('')),
+  tags: z.string().optional(),
+  live_url: z.string().url().optional().or(z.literal('')),
   github_url: z.string().url().optional().or(z.literal('')),
   featured: z.boolean(),
-  sort_order: z.number().min(0),
 });
 
 type ProjectFormData = z.infer<typeof projectSchema>;
@@ -39,12 +37,10 @@ const ProjectFormDialog = ({ open, onOpenChange, project }: ProjectFormDialogPro
     defaultValues: {
       title: '',
       description: '',
-      image_url: '',
-      technologies: '',
-      project_url: '',
+      tags: '',
+      live_url: '',
       github_url: '',
       featured: false,
-      sort_order: 0,
     },
   });
 
@@ -53,23 +49,19 @@ const ProjectFormDialog = ({ open, onOpenChange, project }: ProjectFormDialogPro
       reset({
         title: project.title,
         description: project.description || '',
-        image_url: project.image_url || '',
-        technologies: project.technologies?.join(', ') || '',
-        project_url: project.project_url || '',
+        tags: project.tags?.join(', ') || '',
+        live_url: project.live_url || '',
         github_url: project.github_url || '',
         featured: project.featured,
-        sort_order: project.sort_order,
       });
     } else {
       reset({
         title: '',
         description: '',
-        image_url: '',
-        technologies: '',
-        project_url: '',
+        tags: '',
+        live_url: '',
         github_url: '',
         featured: false,
-        sort_order: 0,
       });
     }
   }, [project, reset]);
@@ -77,10 +69,14 @@ const ProjectFormDialog = ({ open, onOpenChange, project }: ProjectFormDialogPro
   const mutation = useMutation({
     mutationFn: async (data: ProjectFormData) => {
       const payload = {
-        ...data,
-        technologies: data.technologies
-          ? data.technologies.split(',').map((t) => t.trim()).filter(Boolean)
+        title: data.title,
+        description: data.description || '',
+        tags: data.tags
+          ? data.tags.split(',').map((t) => t.trim()).filter(Boolean)
           : [],
+        live_url: data.live_url || null,
+        github_url: data.github_url || null,
+        featured: data.featured,
       };
 
       if (isEditing) {
@@ -127,22 +123,17 @@ const ProjectFormDialog = ({ open, onOpenChange, project }: ProjectFormDialogPro
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image_url">Image URL</Label>
-            <Input id="image_url" {...register('image_url')} placeholder="https://..." />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="technologies">Technologies (comma-separated)</Label>
+            <Label htmlFor="tags">Tags (comma-separated)</Label>
             <Input
-              id="technologies"
-              {...register('technologies')}
+              id="tags"
+              {...register('tags')}
               placeholder="React, TypeScript, Tailwind CSS"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="project_url">Project URL</Label>
-            <Input id="project_url" {...register('project_url')} placeholder="https://..." />
+            <Label htmlFor="live_url">Live URL</Label>
+            <Input id="live_url" {...register('live_url')} placeholder="https://..." />
           </div>
 
           <div className="space-y-2">
@@ -153,11 +144,6 @@ const ProjectFormDialog = ({ open, onOpenChange, project }: ProjectFormDialogPro
           <div className="flex items-center gap-2">
             <input type="checkbox" id="featured" {...register('featured')} className="w-4 h-4" />
             <Label htmlFor="featured">Featured Project</Label>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="sort_order">Sort Order</Label>
-            <Input id="sort_order" type="number" {...register('sort_order', { valueAsNumber: true })} />
           </div>
 
           <div className="flex justify-end gap-3">

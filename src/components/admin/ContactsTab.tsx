@@ -22,7 +22,12 @@ const ContactsTab = () => {
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
-    const { data } = await supabase.from("contact_methods").select("*").order("sort_order");
+    const { data, error } = await supabase.from("contact_methods").select("*").order("sort_order");
+    if (error) {
+      console.error("Error fetching contact methods:", error);
+      toast.error("Failed to load contact methods");
+      return;
+    }
     if (data) setItems(data);
   };
 

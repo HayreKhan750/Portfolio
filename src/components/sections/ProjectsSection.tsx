@@ -2,16 +2,47 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink, Github, Briefcase } from 'lucide-react';
 
+interface ProjectWithMedia {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  github_url: string | null;
+  live_url: string | null;
+  featured: boolean;
+  created_at: string;
+  media?: Array<{
+    id: string;
+    url: string;
+    type: string;
+  }>;
+}
+
 const ProjectsSection = () => {
-  const { data: projects = [] } = useQuery({
+  const { data: projects = [] } = useQuery<ProjectWithMedia[]>({
     queryKey: ['projects'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: projectsData, error } = await supabase
         .from('projects')
         .select('*')
-        .order('sort_order', { ascending: true });
+        .order('created_at', { ascending: false });
+      
       if (error) throw error;
-      return data;
+
+      // Fetch media for each project
+      const projectsWithMedia = await Promise.all(
+        (projectsData || []).map(async (project) => {
+          const { data: media } = await supabase
+            .from('project_media')
+            .select('id, url, type')
+            .eq('project_id', project.id)
+            .order('sort_order', { ascending: true });
+          
+          return { ...project, media: media || [] };
+        })
+      );
+
+      return projectsWithMedia;
     },
   });
 
@@ -36,10 +67,10 @@ const ProjectsSection = () => {
               key={project.id}
               className="glass-card glass-card-hover rounded-xl p-6 space-y-4"
             >
-              {project.image_url && (
+              {project.media && project.media.length > 0 && (
                 <div className="aspect-video rounded-lg overflow-hidden bg-zinc-800">
                   <img
-                    src={project.image_url}
+                    src={project.media[0].url}
                     alt={project.title}
                     className="w-full h-full object-cover"
                   />
@@ -55,9 +86,9 @@ const ProjectsSection = () => {
                   </p>
                 )}
 
-                {project.technologies && project.technologies.length > 0 && (
+                {project.tags && project.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech: string, index: number) => (
+                    {project.tags.map((tech: string, index: number) => (
                       <span
                         key={index}
                         className="px-3 py-1 text-xs rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
@@ -69,9 +100,9 @@ const ProjectsSection = () => {
                 )}
 
                 <div className="flex gap-3 pt-2">
-                  {project.project_url && (
+                  {project.live_url && (
                     <a
-                      href={project.project_url}
+                      href={project.live_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-sm text-cyan-400 hover:text-cyan-300 transition-colors"

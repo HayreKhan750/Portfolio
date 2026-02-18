@@ -49,8 +49,11 @@ const ProjectsSection = () => {
     queryKey: ["project_media"],
     queryFn: async () => {
       const { data, error } = await supabase.from("project_media").select("*").order("sort_order");
-      if (error) throw error;
-      return data as unknown as (Media & { project_id: string })[];
+      if (error) {
+        console.error("Error fetching project media:", error);
+        return [];
+      }
+      return (data || []) as unknown as (Media & { project_id: string })[];
     },
   });
 
