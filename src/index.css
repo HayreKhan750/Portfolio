@@ -56,7 +56,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -70,7 +71,10 @@
   }
 
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan to-violet;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, hsl(var(--cyan)), hsl(var(--violet)));
   }
 
   .glow-cyan {
@@ -82,7 +86,8 @@
   }
 
   .btn-gradient {
-    @apply bg-gradient-to-r from-cyan to-violet text-background font-semibold px-6 py-3 rounded-xl transition-all duration-300;
+    @apply text-background font-semibold px-6 py-3 rounded-xl transition-all duration-300;
+    background-image: linear-gradient(to right, hsl(var(--cyan)), hsl(var(--violet)));
   }
 
   .btn-gradient:hover {
