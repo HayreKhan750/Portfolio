@@ -70,6 +70,10 @@
     @apply bg-white/5 backdrop-blur-[24px] border border-white/10 rounded-2xl;
   }
 
+  .glass-card-hover {
+    @apply transition-all duration-300 hover:bg-white/10 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10;
+  }
+
   .gradient-text {
     background-clip: text;
     -webkit-background-clip: text;
@@ -93,6 +97,18 @@
   .btn-gradient:hover {
     box-shadow: 0 0 25px hsl(183 100% 50% / 0.4), 0 0 50px hsl(282 99% 53% / 0.3);
     transform: translateY(-1px);
+  }
+
+  .section-spacing {
+    @apply py-20 md:py-32;
+  }
+
+  .content-spacing {
+    @apply space-y-12;
+  }
+
+  .tech-pill {
+    @apply px-4 py-2 rounded-full bg-zinc-800/50 border border-zinc-700 text-sm font-medium text-gray-300 flex items-center gap-2 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all duration-300;
   }
 }
 

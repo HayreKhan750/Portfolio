@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Award, Briefcase, Calendar, MapPin } from 'lucide-react';
-import { formatDate } from '@/lib/utils';
+import { Award, Briefcase, Calendar } from 'lucide-react';
 
 const ExperienceSection = () => {
   const { data: experiences = [] } = useQuery({
@@ -22,7 +21,7 @@ const ExperienceSection = () => {
       const { data, error } = await supabase
         .from('certificates')
         .select('*')
-        .order('sort_order', { ascending: true });
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -61,19 +60,18 @@ const ExperienceSection = () => {
                   
                   <div className="glass-card rounded-lg p-6 space-y-3">
                     <div>
-                      <h4 className="text-xl font-bold text-white">{exp.position}</h4>
-                      <p className="text-cyan-400 font-medium">{exp.company}</p>
+                      <h4 className="text-xl font-bold text-white">{exp.title}</h4>
+                      <p className="text-cyan-400 font-medium">{exp.organization}</p>
                     </div>
                     
                     <div className="flex flex-wrap gap-4 text-sm text-gray-400">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {formatDate(exp.start_date)} - {exp.current ? 'Present' : formatDate(exp.end_date!)}
+                        {exp.date_range}
                       </span>
-                      {exp.location && (
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          {exp.location}
+                      {exp.type && (
+                        <span className="px-2 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs">
+                          {exp.type}
                         </span>
                       )}
                     </div>
@@ -109,22 +107,14 @@ const ExperienceSection = () => {
                       <h4 className="text-lg font-bold text-white">{cert.name}</h4>
                       <p className="text-violet-400">{cert.issuer}</p>
                     </div>
-                    {cert.credential_url && (
-                      <a
-                        href={cert.credential_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-lg bg-violet-500/10 text-violet-400 hover:bg-violet-500/20 transition-colors"
-                      >
-                        <Award className="w-5 h-5" />
-                      </a>
-                    )}
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <Calendar className="w-4 h-4" />
-                    {formatDate(cert.issue_date)}
-                  </div>
+                  {cert.date && (
+                    <div className="flex items-center gap-2 text-sm text-gray-400">
+                      <Calendar className="w-4 h-4" />
+                      {cert.date}
+                    </div>
+                  )}
 
                   {cert.proof_url && (
                     <div className="mt-3">
