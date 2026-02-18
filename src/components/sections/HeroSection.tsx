@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { ArrowDown } from 'lucide-react';
 import HeroOrb from '../HeroOrb';
 

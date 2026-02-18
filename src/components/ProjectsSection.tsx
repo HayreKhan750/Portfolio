@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ExternalLink, Github, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { ProjectCardSkeleton } from "./LoadingSkeleton";
 
 interface Project {
   id: string;
@@ -35,7 +36,7 @@ const ProjectsSection = () => {
   const [selectedMedia, setSelectedMedia] = useState<Media[]>([]);
   const [mediaIndex, setMediaIndex] = useState(0);
 
-  const { data: projects } = useQuery({
+  const { data: projects, isLoading: projectsLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
       const { data, error } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
@@ -64,6 +65,22 @@ const ProjectsSection = () => {
     setSelectedMedia(media);
     setMediaIndex(0);
   };
+
+  if (projectsLoading) {
+    return (
+      <section id="work" className="py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
+            <h2 className="font-heading text-4xl font-bold mb-2">Selected <span className="gradient-text">Work</span></h2>
+            <p className="text-muted-foreground">Projects that showcase my capabilities.</p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[...Array(3)].map((_, i) => <ProjectCardSkeleton key={i} />)}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (!projects || projects.length === 0) {
     return (

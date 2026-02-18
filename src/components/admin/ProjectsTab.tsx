@@ -43,7 +43,7 @@ const ProjectsTab = () => {
 
   const fetchProjects = async () => {
     const { data } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-    if (data) setProjects(data as any);
+    if (data) setProjects(data as Project[]);
   };
 
   const fetchMedia = async (projectId: string) => {

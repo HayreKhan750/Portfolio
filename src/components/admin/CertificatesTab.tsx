@@ -48,7 +48,11 @@ const CertificatesTab = () => {
       setUploading(false);
     }
 
-    const payload: any = { name: form.name, issuer: form.issuer, date: form.date || null };
+    const payload: { name: string; issuer: string; date: string | null; proof_url?: string } = { 
+      name: form.name, 
+      issuer: form.issuer, 
+      date: form.date || null 
+    };
     if (proofUrl) payload.proof_url = proofUrl;
     else if (form.proof_url) payload.proof_url = form.proof_url;
 

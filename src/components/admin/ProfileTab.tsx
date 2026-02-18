@@ -22,7 +22,7 @@ const ProfileTab = () => {
     const { data } = await supabase.from("profile").select("*").limit(1).single();
     if (data) {
       setProfileId(data.id);
-      setName((data as any).name || "");
+      setName(data.name || "");
       setHeadline(data.headline || "");
       setBio(data.bio || "");
       setResumeUrl(data.resume_url || "");
@@ -56,7 +56,7 @@ const ProfileTab = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    const payload = { name, headline, bio, resume_url: resumeUrl, avatar_url: avatarUrl } as any;
+    const payload = { name, headline, bio, resume_url: resumeUrl, avatar_url: avatarUrl };
     
     let error;
     if (profileId) {

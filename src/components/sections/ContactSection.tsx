@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
@@ -59,7 +59,7 @@ const ContactSection = () => {
 
   const getIconComponent = (iconName?: string) => {
     if (!iconName) return null;
-    const Icon = (LucideIcons as any)[iconName];
+    const Icon = LucideIcons[iconName as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
     return Icon ? <Icon className="w-5 h-5" /> : null;
   };
 

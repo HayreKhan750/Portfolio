@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { Code2, Wrench } from 'lucide-react';
 
 const SkillsSection = () => {
@@ -50,7 +50,7 @@ const SkillsSection = () => {
               </h3>
               
               <div className="flex flex-wrap gap-3">
-                {(categorySkills as any[]).map((skill: any) => (
+                {categorySkills.map((skill) => (
                   <div
                     key={skill.id}
                     className="group relative"

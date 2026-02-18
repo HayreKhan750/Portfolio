@@ -17,7 +17,9 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const iconMap: Record<string, any> = {
+type IconComponent = typeof Mail;
+
+const iconMap: Record<string, IconComponent> = {
   Mail, Phone, Github, Linkedin, Globe, Twitter,
   mail: Mail, phone: Phone, github: Github, linkedin: Linkedin, globe: Globe, twitter: Twitter,
   X: Twitter, x: Twitter,

@@ -3,7 +3,9 @@ import { GraduationCap, Briefcase, Award } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const typeIcons: Record<string, any> = { education: GraduationCap, work: Briefcase, award: Award };
+type IconComponent = typeof GraduationCap;
+
+const typeIcons: Record<string, IconComponent> = { education: GraduationCap, work: Briefcase, award: Award };
 const typeLabels: Record<string, string> = { education: "Education", work: "Work", award: "Awards" };
 
 const ExperienceSection = () => {

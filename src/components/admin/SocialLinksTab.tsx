@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase, type SocialLink } from '@/lib/supabase';
+import { supabase, type SocialLink } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Plus, Pencil, Trash2, Link as LinkIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -37,7 +37,7 @@ const SocialLinksTab = () => {
 
   const getIconComponent = (iconName?: string) => {
     if (!iconName) return <LinkIcon className="w-5 h-5" />;
-    const Icon = (LucideIcons as any)[iconName];
+    const Icon = LucideIcons[iconName as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
     return Icon ? <Icon className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />;
   };
 

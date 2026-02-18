@@ -19,8 +19,8 @@ const HeroSection = () => {
     },
   });
 
-  const avatarUrl = (profile as any)?.avatar_url;
-  const displayName = (profile as any)?.name || "Hayredin Mohammed";
+  const avatarUrl = profile?.avatar_url;
+  const displayName = profile?.name || "Hayredin Mohammed";
   const nameParts = displayName.split(" ");
   const firstName = nameParts[0] || "";
   const lastName = nameParts.slice(1).join(" ") || "";

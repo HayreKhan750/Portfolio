@@ -15,7 +15,9 @@ interface Experience {
   sort_order: number;
 }
 
-const typeIcons: Record<string, any> = { education: GraduationCap, work: Briefcase, award: Award };
+type IconComponent = typeof GraduationCap;
+
+const typeIcons: Record<string, IconComponent> = { education: GraduationCap, work: Briefcase, award: Award };
 
 const ExperienceTab = () => {
   const [items, setItems] = useState<Experience[]>([]);

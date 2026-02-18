@@ -31,9 +31,9 @@ const Navbar = () => {
   });
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-t-0 border-x-0 rounded-none px-6 py-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-t-0 border-x-0 rounded-none px-6 py-4" role="navigation" aria-label="Main navigation">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <a href="#" className="flex items-center gap-3">
+        <a href="#" className="flex items-center gap-3" aria-label="Home">
           <span className="font-heading text-2xl font-bold tracking-tight">
             <span className="text-cyan">H</span>
             <span className="text-violet">M</span>
@@ -51,7 +51,7 @@ const Navbar = () => {
           )}
         </div>
 
-        <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
+        <button className="md:hidden text-foreground" onClick={() => setOpen(!open)} aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open}>
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>

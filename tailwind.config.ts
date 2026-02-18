@@ -8,6 +8,10 @@ export default {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
+  safelist: [
+    'animate-float',
+    'animate-pulse-glow',
+  ],
   prefix: "",
   theme: {
     container: {
