@@ -71,13 +71,13 @@ const ProjectsSection = () => {
 
   if (projectsLoading) {
     return (
-      <section id="work" className="py-32 px-6">
+      <section id="work" className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
             <h2 className="font-heading text-4xl font-bold mb-2">Selected <span className="gradient-text">Work</span></h2>
             <p className="text-muted-foreground">Projects that showcase my capabilities.</p>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => <ProjectCardSkeleton key={i} />)}
           </div>
         </div>
@@ -87,7 +87,7 @@ const ProjectsSection = () => {
 
   if (!projects || projects.length === 0) {
     return (
-      <section id="work" className="py-32 px-6">
+      <section id="work" className="py-24 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="font-heading text-4xl font-bold mb-2">Selected <span className="gradient-text">Work</span></h2>
           <p className="text-muted-foreground">Projects coming soon.</p>
@@ -97,14 +97,15 @@ const ProjectsSection = () => {
   }
 
   return (
-    <section id="work" className="py-32 px-6">
+    <section id="work" className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
           <h2 className="font-heading text-4xl font-bold mb-2">Selected <span className="gradient-text">Work</span></h2>
           <p className="text-muted-foreground">Projects that showcase my capabilities.</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Consistent grid: 1 col mobile, 2 cols tablet, 3 cols desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, i) => {
             const thumb = getThumb(project.id);
             return (
@@ -116,18 +117,39 @@ const ProjectsSection = () => {
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 onClick={() => openProject(project)}
-                className={`glass-card p-6 cursor-pointer group hover:border-cyan/30 transition-all duration-300 ${project.featured ? "md:col-span-2" : ""}`}
+                className="glass-card cursor-pointer group hover:border-cyan/30 transition-all duration-300 flex flex-col overflow-hidden"
                 style={{ boxShadow: "0 0 0 0 transparent" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 20px hsl(183 100% 50% / 0.15)"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 0 transparent"; }}
               >
-                {thumb && <img src={thumb} alt={project.title} loading="lazy" className="w-full h-40 object-cover rounded-xl mb-4" />}
-                <h3 className="font-heading text-xl font-semibold mb-2 group-hover:text-cyan transition-colors">{project.title}</h3>
-                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-cyan">{tag}</span>
-                  ))}
+                {/* Image container with consistent aspect ratio (16:10) */}
+                <div className="relative w-full aspect-[16/10] overflow-hidden bg-muted/20">
+                  {thumb ? (
+                    <img
+                      src={thumb}
+                      alt={project.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <span className="text-sm">No preview</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content section with consistent padding */}
+                <div className="p-5 flex flex-col flex-grow">
+                  <h3 className="font-heading text-lg font-semibold mb-2 group-hover:text-cyan transition-colors line-clamp-1">{project.title}</h3>
+                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2 flex-grow">{project.description}</p>
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {project.tags.slice(0, 4).map((tag) => (
+                      <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-cyan">{tag}</span>
+                    ))}
+                    {project.tags.length > 4 && (
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-muted-foreground">+{project.tags.length - 4}</span>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             );
@@ -149,14 +171,14 @@ const ProjectsSection = () => {
             {selectedMedia.length > 0 && (
               <div className="relative mb-6">
                 {selectedMedia[mediaIndex].type === "video" ? (
-                  <video src={selectedMedia[mediaIndex].url} controls className="w-full rounded-xl max-h-64 object-contain" />
+                  <video src={selectedMedia[mediaIndex].url} controls className="w-full rounded-xl max-h-80 object-contain" />
                 ) : (
-                  <img src={selectedMedia[mediaIndex].url} alt="" className="w-full rounded-xl max-h-64 object-contain" />
+                  <img src={selectedMedia[mediaIndex].url} alt="" className="w-full rounded-xl max-h-80 object-contain" />
                 )}
                 {selectedMedia.length > 1 && (
-                  <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
-                    <button onClick={() => setMediaIndex(i => (i - 1 + selectedMedia.length) % selectedMedia.length)} className="p-1 rounded-full bg-black/50 text-white hover:bg-black/70"><ChevronLeft size={18} /></button>
-                    <button onClick={() => setMediaIndex(i => (i + 1) % selectedMedia.length)} className="p-1 rounded-full bg-black/50 text-white hover:bg-black/70"><ChevronRight size={18} /></button>
+                  <div className="absolute inset-0 flex items-center justify-between px-2">
+                    <button onClick={() => setMediaIndex(i => (i - 1 + selectedMedia.length) % selectedMedia.length)} className="p-2 rounded-full bg-black/50 text-white hover:bg-black/70 ml-2"><ChevronLeft size={20} /></button>
+                    <button onClick={() => setMediaIndex(i => (i + 1) % selectedMedia.length)} className="p-2 rounded-full bg-black/50 text-white hover:bg-black/70 mr-2"><ChevronRight size={20} /></button>
                   </div>
                 )}
               </div>
